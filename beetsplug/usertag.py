@@ -33,7 +33,6 @@ def add_usertag(lib, opts, args):
     id = int(args[0])
     item = lib.get_item(id)
     usertags = item.get('usertags', None)
-    print(usertags)
     if usertags is None:
         usertags = []
     else:
@@ -42,7 +41,6 @@ def add_usertag(lib, opts, args):
     usertags = list(set(usertags))
     if '' in usertags:
         usertags.pop(usertags.index(''))
-    print(usertags)
     item.update({'usertags': '|'.join(usertags)})
     item.store()
 add_tag_command = Subcommand('addtag',
@@ -83,6 +81,21 @@ clear_tags_command = Subcommand('cleartags',
 clear_tags_command.func = clear_usertags
 
 
+def list_usertags(lib, opts, args):
+    items = lib.items(u'')
+    alltags = []
+    for item in items:
+        usertags = item.get('usertags', None)
+        if usertags:
+            alltags += usertags.split('|')
+    for tag in set(alltags):
+        print tag
+list_tags_command = Subcommand('listtags',
+                               help='list all user defined tags',
+                               aliases=('lst',))
+list_tags_command.func = list_usertags
+
+
 class UserTagsPlugin(BeetsPlugin):
     """UserTags plugin to support user defined tags"""
     item_types = {'usertags': types.STRING}
@@ -91,4 +104,7 @@ class UserTagsPlugin(BeetsPlugin):
         super(UserTagsPlugin, self).__init__()
 
     def commands(self):
-        return [add_tag_command, rm_tag_command, clear_tags_command]
+        return [add_tag_command,
+                rm_tag_command,
+                clear_tags_command,
+                list_tags_command]
