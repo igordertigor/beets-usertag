@@ -5,22 +5,28 @@ Provides user defined keyword tags for
 add and remove tags and to clear all tags from a file. These are specifically:
 
 ```
-beet addtag <id> <usertag>[|<other-usertag>[...]]
+beet addtag <query> -t <usertag>[ -t <other-usertag>[...]]
 ```
 
 Adds one (or more) usertags to the track with the given id.
 
 ```
-beet rmtag <id> <usertag>
+beet rmtag <query> -t <usertag>[ -t <other-usertag>[...]]
 ```
 
 Removes a usertag from the track with the given id.
 
 ```
-beet cleartags <id>
+beet cleartags <query>
 ```
 
 Strips all usertags from the track with the given id.
+
+```
+beet listtags
+```
+
+Lists all user defined tags and a count of tracks that used those tags.
 
 # Installation
 
