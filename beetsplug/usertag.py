@@ -20,6 +20,8 @@ beet ls usertags:<filtertag>
 
 copyright 2015 by Ingo Fruend (github@ingofruend.net)
 """
+from __future__ import (division, absolute_import, print_function,
+                        unicode_literals)
 
 # TODO: tests
 
@@ -45,7 +47,7 @@ def add_usertag(lib, opts, args):
             usertags.pop(usertags.index(''))
         item.update({'usertags': '|'.join(usertags)})
         item.store()
-        print 'Added tags\n   {}'.format(item)
+        print('Added tags\n   {}'.format(item))
 add_tag_command = Subcommand(
     'addtag',
     help='Add user defined tags.',
@@ -77,7 +79,7 @@ def remove_usertag(lib, opts, args):
         else:
             item.update({'usertags': None})
         item.store()
-        print 'Removed tags {}\n    {}'.format(deltags, item)
+        print('Removed tags {}\n    {}'.format(deltags, item))
 rm_tag_command = Subcommand('rmtag',
                             help='remove user defined tag',
                             aliases=('rmt',))
@@ -110,7 +112,7 @@ def list_usertags(lib, opts, args):
         if usertags:
             alltags += usertags.split('|')
     for tag in sorted(set(alltags)):
-        print tag, len([True for t in alltags if t == tag])
+        print(tag, len([True for t in alltags if t == tag]))
 list_tags_command = Subcommand('listtags',
                                help='list all user defined tags',
                                aliases=('lst',))
