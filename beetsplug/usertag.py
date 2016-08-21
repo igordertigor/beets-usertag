@@ -30,52 +30,73 @@ from beets.dbcore import types
 
 def add_usertag(lib, opts, args):
     """Add a usertag"""
-    id = int(args[0])
-    item = lib.get_item(id)
-    usertags = item.get('usertags', None)
-    if usertags is None:
-        usertags = []
-    else:
-        usertags = usertags.split('|')
-    usertags.append(' '.join(args[1:]))
-    usertags = list(set(usertags))
-    if '' in usertags:
-        usertags.pop(usertags.index(''))
-    item.update({'usertags': '|'.join(usertags)})
-    item.store()
-add_tag_command = Subcommand('addtag',
-                             help='add user defined tag',
-                             aliases=('adt',))
+    items = lib.items(args)
+    newtags = opts.tags
+    for item in items:
+        usertags = item.get('usertags', None)
+        if usertags is None:
+            usertags = []
+        else:
+            usertags = usertags.split('|')
+        # usertags.append(' '.join(newtags))
+        usertags.extend(newtags)
+        usertags = list(set(usertags))
+        if '' in usertags:
+            usertags.pop(usertags.index(''))
+        item.update({'usertags': '|'.join(usertags)})
+        item.store()
+        print 'Added tags\n   {}'.format(item)
+add_tag_command = Subcommand(
+    'addtag',
+    help='Add user defined tags.',
+    aliases=('adt',))
 add_tag_command.func = add_usertag
+add_tag_command.parser.add_option(
+    '--tag', '-t',
+    action='append', dest='tags',
+    help='Tag to add. '
+    'Combine multiple tags by specifiing this option repeatedly.')
+add_tag_command.parser.usage += '\n'\
+    'Example: beet addtag artist:beatles -t favourites'
 
 
 def remove_usertag(lib, opts, args):
     """Remove a usertag"""
-    id = int(args[0])
-    item = lib.get_item(id)
-    usertags = item.get('usertags', None)
-    if usertags is None:
-        return
-    usertags = item['usertags'].split('|')
-    idx = usertags.index(' '.join(args[1:]))
-    usertags.pop(idx)
-    if len(usertags):
-        item.update({'usertags': '|'.join(usertags)})
-    else:
-        item.update({'usertags': None})
-    item.store()
+    items = lib.items(args)
+    deltags = opts.tags
+    for item in items:
+        usertags = item.get('usertags', None)
+        if usertags is None:
+            return
+        usertags = item['usertags'].split('|')
+        for tag in deltags:
+            idx = usertags.index(tag)
+            usertags.pop(idx)
+        if len(usertags):
+            item.update({'usertags': '|'.join(usertags)})
+        else:
+            item.update({'usertags': None})
+        item.store()
+        print 'Removed tags {}\n    {}'.format(deltags, item)
 rm_tag_command = Subcommand('rmtag',
                             help='remove user defined tag',
                             aliases=('rmt',))
 rm_tag_command.func = remove_usertag
+rm_tag_command.parser.add_option(
+    '--tag', '-t',
+    action='append', dest='tags',
+    help='Tag to remove. '
+    'Combine multiple tags by specifiing this option repeatedly.')
+rm_tag_command.parser.usage += '\n'\
+    'Example: beet rmtag artist:beatles -t favourites'
 
 
 def clear_usertags(lib, opts, args):
     """Clear all usertags"""
-    id = int(args[0])
-    item = lib.get_item(id)
-    item.update({'usertags': None})
-    item.store()
+    items = lib.items(args)
+    for item in items:
+        item.update({'usertags': None})
+        item.store()
 clear_tags_command = Subcommand('cleartags',
                                 help='remove ALL user defined tags')
 clear_tags_command.func = clear_usertags
@@ -88,8 +109,8 @@ def list_usertags(lib, opts, args):
         usertags = item.get('usertags', None)
         if usertags:
             alltags += usertags.split('|')
-    for tag in set(alltags):
-        print tag
+    for tag in sorted(set(alltags)):
+        print tag, len([True for t in alltags if t == tag])
 list_tags_command = Subcommand('listtags',
                                help='list all user defined tags',
                                aliases=('lst',))
