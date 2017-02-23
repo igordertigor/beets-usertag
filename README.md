@@ -30,6 +30,6 @@ Lists all user defined tags and a count of tracks that used those tags.
 
 # Installation
 
-Put the beetsplug folder somewhere in your PYTHONPATH and activate tbe plugin
+Put the beetsplug folder somewhere in your PYTHONPATH and activate the plugin
 in beets' config.yaml file. This is described in more detail in the [beets
 documentation](http://beets.readthedocs.org/en/latest/index.html).
