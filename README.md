@@ -28,6 +28,12 @@ beet listtags
 
 Lists all user defined tags and a count of tracks that used those tags.
 
+```
+beet list usertags:my-tag
+```
+
+Query user tags as you would query any other field with the standard `list` command.
+
 # Installation
 
 First, install the package with `pip`:
