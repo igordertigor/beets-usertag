@@ -32,7 +32,7 @@ from beets.dbcore import types
 
 def add_usertag(lib, opts, args):
     """Add a usertag"""
-    items = lib.items(args)
+    items = _get_items(lib, opts, args)
     newtags = opts.tags
     for item in items:
         usertags = item.get('usertags', None)
@@ -57,14 +57,19 @@ add_tag_command.parser.add_option(
     '--tag', '-t',
     action='append', dest='tags',
     help='Tag to add. '
-    'Combine multiple tags by specifiing this option repeatedly.')
+    'Combine multiple tags by specifying this option repeatedly.')
+add_tag_command.parser.add_option(
+    '--album', '-a',
+    action='store_true', default=False,
+    dest='album', help='tag only albums'
+)
 add_tag_command.parser.usage += '\n'\
     'Example: beet addtag artist:beatles -t favourites'
 
 
 def remove_usertag(lib, opts, args):
     """Remove a usertag"""
-    items = lib.items(args)
+    items = _get_items(lib, opts, args)
     deltags = opts.tags
     for item in items:
         usertags = item.get('usertags', None)
@@ -88,24 +93,34 @@ rm_tag_command.parser.add_option(
     '--tag', '-t',
     action='append', dest='tags',
     help='Tag to remove. '
-    'Combine multiple tags by specifiing this option repeatedly.')
+    'Combine multiple tags by specifying this option repeatedly.')
+rm_tag_command.parser.add_option(
+    '--album', '-a',
+    action='store_true', default=False,
+    dest='album', help='remove tag only from albums'
+)
 rm_tag_command.parser.usage += '\n'\
     'Example: beet rmtag artist:beatles -t favourites'
 
 
 def clear_usertags(lib, opts, args):
     """Clear all usertags"""
-    items = lib.items(args)
+    items = _get_items(lib, opts, args)
     for item in items:
         item.update({'usertags': None})
         item.store()
 clear_tags_command = Subcommand('cleartags',
-                                help='remove ALL user defined tags')
+                                help='remove ALL user-defined tags from tracks')
+clear_tags_command.parser.add_option(
+    '--album', '-a',
+    action='store_true', default=False,
+    dest='album', help='remove user-defined tags from albums'
+)
 clear_tags_command.func = clear_usertags
 
 
 def list_usertags(lib, opts, args):
-    items = lib.items(u'')
+    items = _get_items(lib, opts, args)
     alltags = []
     for item in items:
         usertags = item.get('usertags', None)
@@ -114,9 +129,21 @@ def list_usertags(lib, opts, args):
     for tag in sorted(set(alltags)):
         print(tag, len([True for t in alltags if t == tag]))
 list_tags_command = Subcommand('listtags',
-                               help='list all user defined tags',
+                               help='list all user-defined tags on tracks',
                                aliases=('lst',))
+list_tags_command.parser.add_option(
+    '--album', '-a',
+    action='store_true', default=False,
+    dest='album', help='list all user-defined tags on albums'
+)
 list_tags_command.func = list_usertags
+
+
+def _get_items(lib, opts, args):
+    if opts.album:
+        return lib.albums(args)
+    else:
+        return lib.items(args)
 
 
 class UserTagsPlugin(BeetsPlugin):
