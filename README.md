@@ -5,34 +5,39 @@ Provides user defined keyword tags for
 add and remove tags and to clear all tags from a file. These are specifically:
 
 ```
-beet addtag <query> -t <usertag>[ -t <other-usertag>[...]]
+beet addtag <query> -t <usertag>[ -t <other-usertag>[...]] [-a]
 ```
 
-Adds one (or more) usertags to the track with the given id.
+Adds one (or more) usertags to the track with the given id. Use the `-a` flag to
+tag albums instead.
 
 ```
-beet rmtag <query> -t <usertag>[ -t <other-usertag>[...]]
+beet rmtag <query> -t <usertag>[ -t <other-usertag>[...]] [-a]
 ```
 
-Removes a usertag from the track with the given id.
+Removes a usertag from the track with the given id. Use the `-a` flag to remove
+a tag from an album.
 
 ```
-beet cleartags <query>
+beet cleartags <query> [-a]
 ```
 
-Strips all usertags from the track with the given id.
+Strips all usertags from the track with the given id. Use the `-a` flag to strip
+all usertags from the specified albums.
 
 ```
-beet listtags
+beet listtags [-a]
 ```
 
-Lists all user defined tags and a count of tracks that used those tags.
+Lists all user defined tags and a count of tracks that used those tags. Use the 
+`-a` flag to return user-defined tags and count for albums.
 
 ```
 beet list usertags:my-tag
 ```
 
-Query user tags as you would query any other field with the standard `list` command.
+Query user tags as you would query any other field with the standard `list`
+command. Add the `-a` flag to list user-tagged albums.
 
 # Installation
 
